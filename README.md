@@ -29,9 +29,9 @@ Individual logs can then be opened and tail'ed:
             console.error (error.toString ());
     }
     
-    log.readAll (1, feedCb, doneCb);
+    reader.readAll (1, feedCb, doneCb);
     
-    log.tail (1, function (error, event) {
+    reader.tail (1, function (error, event) {
         if (error)
             console.error (error.toString ());
         else
