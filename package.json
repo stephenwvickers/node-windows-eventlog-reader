@@ -1,0 +1,36 @@
+{
+  "name": "windows-eventlog-reader",
+  "version": "1.0.0",
+  "description": "Read windows event logs",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "dependencies": {},
+  "contributors": [ 
+    {
+      "name": "Stephen Vickers",
+      "email": "stephen.vickers.sv@gmail.com"
+    } 
+  ],
+  "repository": {
+    "type": "mercurial",
+    "url": "https://bitbucket.org/stephenwvickers/node-windows-eventlog-reader"
+  },
+  "keywords": [
+    "eventlog",
+    "eventlog-reader",
+    "eventlog-tail",
+    "log",
+    "log-reader",
+    "log-tail",
+    "reader",
+    "tail",
+  	 "windows",
+  	 "windows-eventlog",
+  	 "windows-eventlog-reader",
+  	 "windows-eventlog-tail"
+  ],
+  "author": "Stephen Vickers <stephen.vickers.sv@gmail.com>",
+  "license": "GPL"
+}
