@@ -131,17 +131,29 @@ void EventLogWrap::OpenRequestBegin (uv_work_t* request) {
 	OpenRequest *open_request = (OpenRequest*) request->data;
 	
 	open_request->rcode = 0;
-	
-	open_request->log->Lock ();
 
-	if (! open_request->log->event_log_handle_) {
-		if (! (open_request->log->event_log_handle_ = ::OpenEventLog (NULL,
-				open_request->log->event_log_name_.c_str ()))) {
-			open_request->rcode = GetLastError ();
-		}
-	}
+	std::string key_name = EVENTLOG_KEY_PREFIX
+			+ open_request->log->event_log_name_;
+
+	HKEY key_handle;
+	DWORD rc = RegOpenKeyEx (HKEY_LOCAL_MACHINE, key_name.c_str (), 0,
+			KEY_READ, &key_handle);
+	RegCloseKey (key_handle);
 	
-	open_request->log->UnLock ();
+	if (rc != ERROR_SUCCESS) {
+		open_request->rcode = rc;
+	} else {
+		open_request->log->Lock ();
+
+		if (! open_request->log->event_log_handle_) {
+			if (! (open_request->log->event_log_handle_ = ::OpenEventLog (NULL,
+					open_request->log->event_log_name_.c_str ()))) {
+				open_request->rcode = GetLastError ();
+			}
+		}
+
+		open_request->log->UnLock ();
+	}
 }
 
 void EventLogWrap::OpenRequestEnd (uv_work_t* request, int status) {
@@ -157,7 +169,10 @@ void EventLogWrap::OpenRequestEnd (uv_work_t* request, int status) {
 		if (open_request->rcode > 0) {
 			Local<Value> argv[1];
 			DWORD rcode = open_request->rcode;
-			argv[0] = Exception::Error (String::New (eventlog_strerror (rcode)));
+			argv[0] = Exception::Error (String::New (
+					rcode == ENOENT
+							? "Event log does not exist"
+							: eventlog_strerror (rcode)));
 			open_request->cb->Call (open_request->log->handle_, 1, argv);
 		} else {
 			open_request->cb->Call (open_request->log->handle_, 0, NULL);
@@ -423,8 +438,13 @@ void EventLogWrap::ReadRequestEnd (uv_work_t* request, int status) {
 
 				argv[1] = event;
 				
-				read_request->cb->Call (read_request->log->handle_, 2, argv);
+				Local<Value> result = read_request->cb->Call (
+						read_request->log->handle_, 2, argv);
 				
+				if (result->IsBoolean ())
+					if (result->ToBoolean ()->Value ())
+						break;
+
 				iterator++;
 			}
 			

@@ -235,6 +235,10 @@ function will be called.  The following arguments will be passed to the
  * `error` - Instance of the `Error` class or a sub-class, or `null` if no
    error occurred
 
+If the `feedCallback` function returns a `true` value when called no more
+events will be read or passed to the `feedCallback` function, and the
+`doneCallback` will be called.
+
 Once the `doneCallback` function has been called the read is complete and
 the `feedCallback` function will no longer be called.
 
@@ -282,6 +286,10 @@ function will be called.  The following arguments will be passed to the
 
  * `error` - Instance of the `Error` class or a sub-class, or `null` if no
    error occurred
+
+If the `feedCallback` function returns a `true` value when called no more
+events will be read or passed to the `feedCallback` function, and the
+`doneCallback` will be called.
 
 Once the `doneCallback` function has been called all available events will
 have been read and the `feedCallback` function will no longer be called.
@@ -331,6 +339,9 @@ log, or if an error occurs.  The following arguments will be passed to the
 first `error` argument defined, and after the `callback` function returns the
 tail operation will be stopped.
 
+If the `callback` function returns a `true` value when called no more events
+will be read, and the `callback` function will not be called again.
+
 The following example reads all events starting at offset 6,000, and then
 tails the Windows event log, calling the `cb` function as and when events
 become available:
@@ -373,16 +384,18 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 
  * Add "Error Handling" section to the README.md file
 
+## Version 1.0.2 - 01/07/2013
+
+ * Feed callback functions can return `true` to indicate an operation should
+   stop feeding events
+ * Silence some compilation warnings
+ * Throw an exception when the event log name provided is not valid
+
 # Roadmap
 
 In no particular order:
 
- * Make `close()` operations non-blocking (line `open()`, `read()`, etc.)
- * Allow the `read()` and `readAll()` `feedCallbacks` to indicate reading
-   should stop by returning some value (i.e. something like `true`)
- * Throw an exception when the event log name provided is not valid
- * Automatically re-open event logs when the `eventlog.EventLogClearedError`
-   error is experienced
+ * Implement example Windows Event Log Syslog Forwarder Windows Service
 
 Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.
 

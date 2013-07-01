@@ -68,7 +68,7 @@ function readCb (req, error, event) {
 	if (error || ! event) {
 		req.doneCb (error);
 	} else {
-		req.feedCb (patchEvent (event));
+		return req.feedCb (patchEvent (event));
 	}
 }
 
@@ -86,6 +86,8 @@ function readAllCb (req, error, event) {
 	if (error || ! event) {
 		if (! req.lastRecordNumber) {
 			req.doneCb (error);
+		} else if (req.stop) {
+			req.doneCb ();
 		} else {
 			me = this;
 			req.offset = req.lastRecordNumber + 1;
@@ -94,7 +96,8 @@ function readAllCb (req, error, event) {
 		}
 	} else {
 		req.lastRecordNumber = event.recordNumber;
-		req.feedCb (patchEvent (event));
+		req.stop = req.feedCb (patchEvent (event)) || false;
+		return req.stop;
 	}
 }
 
@@ -112,20 +115,20 @@ Reader.prototype.readAll = function (offset, feedCb, doneCb) {
 
 function tailCb (req, error, event) {
 	if (error || ! event) {
-		if (! req.lastRecordNumber) {
-			if (error) {
-				if (error.event_log_file_changed) {
-					var newError = new EventLogClearedError (error.message);
-					req.cb (newError);
-				} else {
-					req.cb (error);
-				}
+		if (error) {
+			if (error.event_log_file_changed) {
+				var newError = new EventLogClearedError (error.message);
+				req.cb (newError);
 			} else {
-				var me = this;
-				setTimeout (function () {
-					me.wrap.read (req.offset, tailCb.bind (me, req));
-				}, req.interval);
+				req.cb (error);
 			}
+		} else if (req.stop) {
+			return;
+		} else if (! req.lastRecordNumber) {
+			var me = this;
+			setTimeout (function () {
+				me.wrap.read (req.offset, tailCb.bind (me, req));
+			}, req.interval);
 		} else {
 			me = this;
 			req.offset = req.lastRecordNumber + 1;
@@ -134,7 +137,8 @@ function tailCb (req, error, event) {
 		}
 	} else {
 		req.lastRecordNumber = event.recordNumber;
-		req.cb (null, patchEvent (event));
+		req.stop = req.cb (null, patchEvent (event)) || false;
+		return req.stop;
 	}
 }
 
@@ -145,6 +149,7 @@ Reader.prototype.tail = function (offset, interval, cb) {
 	}
 	var req = {
 		offset: offset,
+		stop: false,
 		lastRecordNumber: 0,
 		interval: interval,
 		cb: cb
