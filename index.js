@@ -159,3 +159,5 @@ exports.createReader = function (name) {
 };
 
 exports.Reader = Reader;
+
+exports.EventLogClearedError = EventLogClearedError;
