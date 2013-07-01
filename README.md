@@ -104,6 +104,51 @@ Each event object will have following parameters:
    to the event and not defined by this module
  * `message` - String containing the formatted event message
 
+# Error Handling
+
+Each operation exposed by this module typically requires a mandatory callback
+function which will be called when an operation completes.
+
+Callback functions are typically provided an `error` argument, and almost all
+errors are instances of the `Error` class.
+
+In the event a Windows event log is cleared while a reader is reading from it
+the Win32 API will return the error code `ERROR_EVENTLOG_FILE_CHANGED`.  In
+this case the `error` argument will be an instance of the
+`eventlog.EventLogClearedError` class.
+
+This type of error will typically only occur for operations that involve a
+read from the event log, e.g. `read()` or `tail()`.
+
+If this error is experienced, the event log can be closed, re-opened, and
+the original request re-submitted:
+
+    var offset = 1;
+
+    function cb (error) {
+        if (error) {
+            // When an error occurs this operation will complete, and in the
+            // case of an event log being cleared we want to re-open it and
+            // re-submit our event
+            if (error instanceof eventlog.EventLogClearedError) {
+                eventlog.close ();
+                eventlog.open (function (error) {
+                    if (error)
+                        console.error (error.toString ());
+                    else
+                        eventlog.tail (offset, cb);
+                });
+            } else {
+                console.error (error.toString ());
+            }
+        } else {
+            offset = event.recordNumber;
+            console.dir (event);
+        }
+    }
+
+    eventlog.tail (offset, cb);
+
 # Using This Module
 
 Event log readers are represented by an instance of the `Reader` class.  This
@@ -323,6 +368,10 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 ## Version 1.0.0 - 30/06/2013
 
  * Initial release
+
+## Version 1.0.1 - 01/07/2013
+
+ * Add "Error Handling" section to the README.md file
 
 # Roadmap
 
