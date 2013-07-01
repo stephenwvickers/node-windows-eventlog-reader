@@ -13,7 +13,8 @@ function cb (error, event) {
 	if (error)
 		console.error (error.toString ());
 	else
-		console.dir (event);
+		if (event)
+			console.dir (event);
 }
 
 var reader = eventlog.createReader (name);
