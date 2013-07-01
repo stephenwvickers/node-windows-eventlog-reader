@@ -129,14 +129,14 @@ the original request re-submitted:
         if (error) {
             // When an error occurs this operation will complete, and in the
             // case of an event log being cleared we want to re-open it and
-            // re-submit our event
+            // re-submit our original request
             if (error instanceof eventlog.EventLogClearedError) {
-                eventlog.close ();
-                eventlog.open (function (error) {
+                reader.close ();
+                reader.open (function (error) {
                     if (error)
                         console.error (error.toString ());
                     else
-                        eventlog.tail (offset, cb);
+                        reader.tail (offset, cb);
                 });
             } else {
                 console.error (error.toString ());
@@ -147,7 +147,7 @@ the original request re-submitted:
         }
     }
 
-    eventlog.tail (offset, cb);
+    reader.tail (offset, cb);
 
 # Using This Module
 
@@ -381,6 +381,8 @@ In no particular order:
  * Allow the `read()` and `readAll()` `feedCallbacks` to indicate reading
    should stop by returning some value (i.e. something like `true`)
  * Throw an exception when the event log name provided is not valid
+ * Automatically re-open event logs when the `eventlog.EventLogClearedError`
+   error is experienced
 
 Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.
 
