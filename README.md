@@ -2,7 +2,7 @@
 # windows-eventlog-reader - [homepage][homepage]
 
 This modules provides [Node.js][nodejs] programs the ability to read events
-from a Windows Event Log.
+from a Windows event log.
 
 This module is installed using [node package manager (npm)][npm]:
 
@@ -67,7 +67,7 @@ event loop when blocking operations are performed.
 There is one exception to this claim.  The `close()` method exposed by
 this module is performed within the [Node.js][nodejs] event loop.  This
 function will call the Win32 API function `CloseEventLog()`, which might
-block.  However during development this function always seemed to return
+block.  However, during development this function always seemed to return
 pretty much instantly.
 
 [nodejs]: http://nodejs.org "Node.js"
@@ -82,6 +82,7 @@ This module uses JavaScript objects to represent events, for example:
         recordNumber: 6330,
         timeGenerated: 1372576636,
         timeWritten: 1372576636,
+        eventId: 5104,
         eventType: 'Information',
         eventCategory: 0,
         message: 'Service started'
@@ -98,11 +99,20 @@ Each event object will have following parameters:
    date and time at which the event was generated
  * `timeWritten` - Instance of the JavaScript `Date` class specifying the
    date and time at which the event was actually written to the event log
+ * `eventId` - Number specifying the event identifier, this is specifiec to
+   the event source
  * `eventType` - String specifying event type, this can be one of `Error`,
    `Warning`, `Information`, `AuditSuccess`, `AuditFailure` or `Unknown`
  * `eventCategory` - Number specifying the event category, this is specific
-   to the event and not defined by this module
+   to the event source and is not defined by this module
  * `message` - String containing the formatted event message
+
+Event identifiers, i.e. the `eventId` attribute, contain multiple sub-fields.
+Refer to Win32 API documentation for details on each field.  To obtain the
+event code field, as it is displayed in the Windows event log viewer, bitwise
+`&` the `eventId` attribute with `0xffff`:
+
+    var eventCode = event.eventId & 0xffff;
 
 # Error Handling
 
@@ -210,6 +220,24 @@ The following example opens the `Application` Windows event log:
     reader.open (function (error) {
         if (error)
             console.error (error.toString ());
+    });
+
+## reader.close ()
+
+The `close()` method closes the underlying Windows event log represented by
+the reader.
+
+**NOTE** This function will call the Win32 API function `CloseEventLog()`,
+which might block. However, during development this function always seemed to
+return pretty much instantly.
+
+The following example opens the `Application` Windows event log:
+
+    reader.open (function (error) {
+        if (error)
+            console.error (error.toString ());
+        else
+            reader.close ();
     });
 
 ## reader.read (offset, feedCallback, doneCallback)
@@ -390,6 +418,11 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
    stop feeding events
  * Silence some compilation warnings
  * Throw an exception when the event log name provided is not valid
+
+## Version 1.0.3 - 11/07/2013
+
+ * Added `eventId` attribute to the event object
+ * Added missing documentation for the `close()` method to the README.md file
 
 # Roadmap
 

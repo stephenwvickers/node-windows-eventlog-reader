@@ -39,6 +39,7 @@ struct ParsedEvent {
 	unsigned int record_number;
 	unsigned int time_generated;
 	unsigned int time_written;
+	unsigned int event_id;
 	unsigned int event_type;
 	unsigned int event_category;
 	std::string message;
