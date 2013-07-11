@@ -319,6 +319,7 @@ DWORD EventLogWrap::ParseEvent (const char *buffer, PEVENTLOGRECORD record,
 	parsed_event.record_number = record->RecordNumber;
 	parsed_event.time_generated = record->TimeGenerated;
 	parsed_event.time_written = record->TimeWritten;
+	parsed_event.event_id = record->EventID;
 	parsed_event.event_type = record->EventType;
 	parsed_event.event_category = record->EventCategory;
 	
@@ -429,6 +430,8 @@ void EventLogWrap::ReadRequestEnd (uv_work_t* request, int status) {
 						Integer::NewFromUnsigned (parsed_event.time_generated));
 				event->Set (String::NewSymbol ("timeWritten"),
 						Integer::NewFromUnsigned (parsed_event.time_written));
+				event->Set (String::NewSymbol ("eventId"),
+						Integer::NewFromUnsigned (parsed_event.event_id));
 				event->Set (String::NewSymbol ("eventType"),
 						Integer::NewFromUnsigned (parsed_event.event_type));
 				event->Set (String::NewSymbol ("eventCategory"),
