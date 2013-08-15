@@ -281,12 +281,12 @@ DWORD EventLogWrap::ParseEvent (const char *buffer, PEVENTLOGRECORD record,
 						library, record->EventID, NULL,
 						message, EVENTLOG_BUFFER_SIZE,
 						(va_list*) strings_array);
-				DWORD last_error = (rc <= 0) ? GetLastError () : 0;
+				DWORD last_error = (rc == 0) ? GetLastError () : 0;
 
 				FreeLibrary (library);
 				delete[] strings_array;
 
-				if (rc <= 0) {
+				if (rc == 0) {
 					if (last_error != ERROR_MR_MID_NOT_FOUND)
 						return last_error;
 				} else {
@@ -448,7 +448,7 @@ void EventLogWrap::ReadRequestEnd (uv_work_t* request, int status) {
 					if (result->ToBoolean ()->Value ())
 						break;
 
-				iterator++;
+				++iterator;
 			}
 			
 			read_request->cb->Call (read_request->log->handle_, 0, NULL);
