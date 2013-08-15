@@ -424,6 +424,10 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
  * Added `eventId` attribute to the event object
  * Added missing documentation for the `close()` method to the README.md file
 
+## Version 1.0.4 - 15/08/2013
+
+ * Address various issues reported by cppcheck
+
 # Roadmap
 
 In no particular order:
