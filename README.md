@@ -430,10 +430,6 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 
 # Roadmap
 
-In no particular order:
-
- * Implement example Windows Event Log Syslog Forwarder Windows Service
-
 Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.
 
 # License
