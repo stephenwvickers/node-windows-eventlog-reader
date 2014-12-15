@@ -428,6 +428,10 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 
  * Address various issues reported by cppcheck
 
+## Version 1.0.5 - 15/12/2014
+
+ * Not initializing event log handle results in random invalid handle messages
+
 # Roadmap
 
 Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.
