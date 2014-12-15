@@ -63,6 +63,7 @@ void EventLogWrap::Init (Handle<Object> target) {
 EventLogWrap::EventLogWrap (const char* event_log_name)
 		: event_log_name_ (event_log_name) {
 	event_log_mutex_ = CreateMutex (NULL, FALSE, NULL);
+	event_log_handle_ = NULL;
 }
 
 EventLogWrap::~EventLogWrap () {
