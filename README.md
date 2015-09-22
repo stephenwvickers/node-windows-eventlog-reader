@@ -1,5 +1,13 @@
 
-# windows-eventlog-reader - [homepage][homepage]
+# windows-eventlog-reader
+
+**NOTE** This module has not proved useful to myself or my colleagues who
+it was written for, so I have decided to no longer maintain this project.
+If you would like to take over maintenance of this project please let me
+know via <stephen.vickers.sv@gmail.com>.  For the record, the following
+Microsoft Windows bug is the core reason I am no longer maintaining this
+project - this bug still seems to affect the Windows platforms I am
+targetting - <https://support.microsoft.com/en-us/kb/177199>.
 
 This modules provides [Node.js][nodejs] programs the ability to read events
 from a Windows event log.
@@ -38,7 +46,6 @@ Individual logs can then be opened and tail'ed:
             console.dir (event);
     });
 
-[homepage]: http://re-tool.org "Homepage"
 [nodejs]: http://nodejs.org "Node.js"
 [npm]: https://npmjs.org/ "npm"
 
