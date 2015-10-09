@@ -439,6 +439,10 @@ Bug reports should be sent to <stephen.vickers.sv@gmail.com>.
 
  * Not initializing event log handle results in random invalid handle messages
 
+## Version 1.1.0 - 09/10/2015
+
+ * Add note to the README.md that the project is no longer maintained
+
 # Roadmap
 
 Suggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.
